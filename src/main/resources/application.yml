@@ -1,0 +1,52 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  webflux:
+    cors:
+      allowed-origins: "*" # Cambia esto en producción
+      allowed-methods: "*"
+      allowed-headers: "*"
+      max-age: 3600
+
+  cloud:
+    gateway:
+      routes:
+        # =================================================================
+        # ⬇️⬇️⬇️ CORRECCIÓN 1: Ruta para Actuator (Prometheus, Health) ⬇️⬇️⬇️
+        # =================================================================
+        # Esta ruta debe ir ANTES que la ruta /api/**
+        # Redirige /actuator/prometheus -> taller-api-2:8080/actuator/prometheus
+        - id: taller-api-2-actuator-route
+          uri: http://taller-api-2:8080
+          predicates:
+            - Path=/actuator/**
+
+        # =================================================================
+        # ⬇️⬇️⬇️ CORRECCIÓN 2: Ruta para la API (Sin RewritePath) ⬇️⬇️⬇️
+        # =================================================================
+        # Redirige /api/usuarios -> taller-api-2:8080/api/usuarios
+        - id: taller-api-2-route
+          uri: http://taller-api-2:8080
+          predicates:
+            - Path=/api/**
+          # El filtro RewritePath fue eliminado.
+          # El servicio 'taller-api-2' espera recibir la ruta completa /api/usuarios
+
+        # =================================================================
+        # 3. Ruta a Keycloak (Esta configuración es para Keycloak 23+ SIN /auth)
+        # =================================================================
+        - id: keycloak-route
+          uri: http://keycloak:8080
+          predicates:
+            # Redirige todas las peticiones necesarias para el login y la admin console
+            - Path=/realms/**, /admin/**, /resources/**, /js/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # Exponemos los endpoints del PROPIO Gateway
+        include: health,info,metrics,gateway

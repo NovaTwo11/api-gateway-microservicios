@@ -1,0 +1,385 @@
+{
+  "version": "1.0",
+  "records": [
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/api-gateway/src/main/java/co/edu/uniquindio/gateway/ApiGatewayApplication.java",
+      "timestamp": 1763017605929,
+      "startOffset": 0,
+      "endOffset": 75,
+      "codeContent": "package co.edu.uniquindio.gateway;\n\npublic class ApiGatewayApplication {\n}\n",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 5
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/api-gateway/src/main/java/co/edu/uniquindio/gateway/ApiGatewayApplication.java",
+      "timestamp": 1763017610498,
+      "startOffset": 36,
+      "endOffset": 505,
+      "codeContent": "import org.springframework.boot.SpringApplication;\nimport org.springframework.boot.autoconfigure.SpringBootApplication;\nimport org.springframework.cloud.client.discovery.EnableDiscoveryClient;\n\n@SpringBootApplication\n@EnableDiscoveryClient // Habilita el descubrimiento de servicios (aunque usemos el de Docker)\npublic class ApiGatewayApplication {\n\n    public static void main(String[] args) {\n        SpringApplication.run(ApiGatewayApplication.class, args);\n    }\n\n}",
+      "aiProbability": 70,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 13
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/config/TestConfig.java",
+      "timestamp": 1763021572511,
+      "startOffset": 2547,
+      "endOffset": 2809,
+      "codeContent": "/** URL completa del endpoint /token del realm MASTER */\n    public String getMasterTokenUrl() {\n        // Usa \"master\" en lugar de keycloakRealm\n        return String.format(\"%s/realms/master/protocol/openid-connect/token\",\n                keycloakUrl); \n    }",
+      "aiProbability": 95,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 6
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/support/TokenClient.java",
+      "timestamp": 1763021672919,
+      "startOffset": 3726,
+      "endOffset": 6231,
+      "codeContent": "String cacheKey \u003d \"admin_master_token\"; // Clave de caché específica para el admin\n        TokenInfo tokenInfo \u003d tokenCache.get(cacheKey);\n\n        // Si el token de admin existe y NO ha expirado, lo usamos\n        if (tokenInfo !\u003d null \u0026\u0026 !tokenInfo.isExpired()) {\n            log.debug(\"Reutilizando token de admin en caché\");\n            return tokenInfo.getAccessToken();\n        }\n\n        // Si no hay token o expiró, pedimos uno nuevo AL REALM MASTER\n        log.debug(\"Solicitando nuevo token de admin al realm \u0027master\u0027\");\n        String newToken;\n        int expiresIn \u003d 240; // fallback\n\n        try {\n            // 1. Obtenemos la URL del realm \u0027master\u0027 (del TestConfig)\n            String masterTokenUrl \u003d config.getMasterTokenUrl();\n\n            // 2. Llamamos al método SOBRECARGADO de AuthClient\n            Response response \u003d authClient.requestTokenResponse(\n                    config.getAdminUsername(),\n                    config.getAdminPassword(),\n                    masterTokenUrl // \u003c-- ¡La URL explícita del realm \u0027master\u0027!\n            );\n\n            if (response.statusCode() \u003d\u003d 200) {\n                newToken \u003d response.jsonPath().getString(\"access_token\");\n                Integer exp \u003d response.jsonPath().getInt(\"expires_in\");\n\n                if (exp !\u003d null \u0026\u0026 exp \u003e 0) {\n                    expiresIn \u003d exp;\n                }\n\n                // Guardar el token de admin en caché\n                tokenCache.put(cacheKey, new TokenInfo(newToken, expiresIn));\n                log.debug(\"Nuevo token de ADMIN guardado en caché (expira en {}s)\", expiresIn);\n                return newToken;\n            } else {\n                // Manejar error de autenticación (ej. 401 Unauthorized)\n                log.error(\"¡FALLO CRÍTICO! No se pudo obtener el token de administrador.\");\n                log.error(\"El realm \u0027master\u0027 de Keycloak en {} respondió con status {}. Body: {}\",\n                        masterTokenUrl, response.statusCode(), response.getBody().asString());\n                log.error(\"Verifica las credenciales \u0027admin.username\u0027 y \u0027admin.password\u0027 en test.properties y que Keycloak esté corriendo.\");\n                throw new RuntimeException(\"No se pudo obtener el token de administrador. Revisa la configuración.\");\n            }\n        } catch (Exception e) {\n            log.error(\"Error al solicitar token de admin: {}\", e.getMessage());\n            throw new RuntimeException(\"Error al comunicarse con Keycloak (master): \" + e.getMessage());\n        }",
+      "aiProbability": 95,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 49
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/support/AuthClient.java",
+      "timestamp": 1763021687648,
+      "startOffset": 140,
+      "endOffset": 4587,
+      "codeContent": "io.restassured.http.ContentType; // Importa ContentType\nimport lombok.extern.slf4j.Slf4j;\n\nimport static io.restassured.RestAssured.given;\n\n/**\n * Cliente encargado de manejar la autenticación y obtener información del usuario\n * desde Keycloak (u otro servidor compatible con OpenID Connect).\n */\n@Slf4j\npublic class AuthClient {\n\n    private static AuthClient instance;\n\n    // Estos son los valores por DEFECTO (para el realm \u0027taller\u0027)\n    private final String defaultTokenUrl;\n    private final String clientId;\n    private final String clientSecret;\n    private final String userInfoUrl;\n\n    private AuthClient() {\n        TestConfig config \u003d TestConfig.getInstance();\n        // Renombrado de tokenUrl a defaultTokenUrl para mayor claridad\n        this.defaultTokenUrl \u003d config.getKeycloakTokenUrl(); \n        this.clientId \u003d config.getKeycloakClientId();\n        this.clientSecret \u003d config.getKeycloakClientSecret();\n        this.userInfoUrl \u003d config.getKeycloakUserInfoUrl();\n    }\n\n    public static AuthClient getInstance() {\n        if (instance \u003d\u003d null) {\n            synchronized (AuthClient.class) {\n                if (instance \u003d\u003d null) {\n                    instance \u003d new AuthClient();\n                }\n            }\n        }\n        return instance;\n    }\n\n    /**\n     * --- MÉTODO ANTIGUO (MODIFICADO) ---\n     * Realiza la petición al token endpoint POR DEFECTO (realm \u0027taller\u0027).\n     * Ahora delega la llamada al nuevo método sobrecargado.\n     */\n    public Response requestTokenResponse(String username, String password) {\n        log.debug(\"Solicitando token (por defecto) para user\u003d{}\", username);\n        // Llama al método de trabajo principal usando la URL por defecto\n        return requestTokenResponse(username, password, this.defaultTokenUrl);\n    }\n\n    /**\n     * --- MÉTODO NUEVO (SOBRECARGADO) ---\n     * Esta es la corrección clave.\n     * Realiza la petición al token endpoint en una URL ESPECÍFICA.\n     * Lo usaremos para llamar al realm \u0027master\u0027 cuando pidamos el token de admin.\n     */\n    public Response requestTokenResponse(String username, String password, String specificTokenUrl) {\n        log.debug(\"Solicitando token para user\u003d{} en URL\u003d{}\", username, specificTokenUrl);\n\n        Response response \u003d given()\n                // Corregido: RestAssured recomienda ContentType.URLENC\n                .contentType(ContentType.URLENC) \n                .formParam(\"grant_type\", \"password\")\n                .formParam(\"client_id\", clientId)\n                .formParam(\"client_secret\", clientSecret)\n                .formParam(\"username\", username)\n                .formParam(\"password\", password)\n                .when()\n                .post(specificTokenUrl); // \u003c-- Usa la URL específica\n\n        log.debug(\"Token endpoint → status\u003d{} body\u003d{}\",\n                response.statusCode(), safeBody(response));\n\n        return response;\n    }\n\n\n    /**\n     * Obtiene el access_token y lanza excepción si la respuesta no es exitosa.\n     * (Este método no cambia, seguirá usando el realm por defecto \u0027taller\u0027)\n     */\n    public String getAccessToken(String username, String password) {\n        Response r \u003d requestTokenResponse(username, password); // Llama al método por defecto\n        if (r.statusCode() !\u003d 200) {\n            log.error(\"Error obteniendo token. Status: {}, Body: {}\", r.statusCode(), safeBody(r));\n            throw new RuntimeException(\"No se pudo obtener el token de acceso. Status: \" + r.statusCode());\n        }\n        String token \u003d r.jsonPath().getString(\"access_token\");\n        log.debug(\"Token obtenido correctamente para {} ({} caracteres)\", username, token !\u003d null ? token.length() : 0);\n        return token;\n    }\n\n    /**\n     * Llama al endpoint userinfo con el token proporcionado.\n     * (Este método no cambia)\n     */\n    public Response getUserInfo(String accessToken) {\n        log.debug(\"Llamando al endpoint userinfo\");\n        Response response \u003d given()\n                .header(\"Authorization\", \"Bearer \" + accessToken)\n                .when()\n                .get(userInfoUrl);\n\n        log.debug(\"Userinfo → status\u003d{} body\u003d{}\", response.statusCode(), safeBody(response));\n        return response;\n    }\n\n    private String safeBody(Response response) {\n        try {\n            return response.getBody() !\u003d null ? response.getBody().asString() : \"(sin cuerpo)\";\n        } catch (Exception e) {\n            return \"(error leyendo body)\";\n        }\n    }\n}",
+      "aiProbability": 95,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 116
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/config/TestConfig.java",
+      "timestamp": 1763021986753,
+      "startOffset": 555,
+      "endOffset": 590,
+      "codeContent": "private final String adminClientId;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/config/TestConfig.java",
+      "timestamp": 1763022049686,
+      "startOffset": 4054,
+      "endOffset": 4126,
+      "codeContent": "public java.lang.String getAdminPassword() {\n    return adminPassword;\n}",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 3
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/config/TestConfig.java",
+      "timestamp": 1763022049701,
+      "startOffset": 4116,
+      "endOffset": 4188,
+      "codeContent": "public java.lang.String getAdminUsername() {\n    return adminUsername;\n}",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 3
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/config/TestConfig.java",
+      "timestamp": 1763022049715,
+      "startOffset": 4178,
+      "endOffset": 4264,
+      "codeContent": "public java.lang.String getKeycloakClientSecret() {\n    return keycloakClientSecret;\n}",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 3
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/config/TestConfig.java",
+      "timestamp": 1763022049728,
+      "startOffset": 4254,
+      "endOffset": 4332,
+      "codeContent": "public java.lang.String getKeycloakClientId() {\n    return keycloakClientId;\n}",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 3
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/config/TestConfig.java",
+      "timestamp": 1763022049741,
+      "startOffset": 4322,
+      "endOffset": 4394,
+      "codeContent": "public java.lang.String getKeycloakRealm() {\n    return keycloakRealm;\n}",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 3
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/config/TestConfig.java",
+      "timestamp": 1763022049755,
+      "startOffset": 4384,
+      "endOffset": 4452,
+      "codeContent": "public java.lang.String getKeycloakUrl() {\n    return keycloakUrl;\n}",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 3
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/config/TestConfig.java",
+      "timestamp": 1763022049770,
+      "startOffset": 4442,
+      "endOffset": 4508,
+      "codeContent": "public java.lang.String getApiBaseUrl() {\n    return apiBaseUrl;\n}",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 3
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/config/TestConfig.java",
+      "timestamp": 1763022049784,
+      "startOffset": 4498,
+      "endOffset": 4568,
+      "codeContent": "public java.util.Properties getProperties() {\n    return properties;\n}",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 3
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/config/TestConfig.java",
+      "timestamp": 1763022049796,
+      "startOffset": 4558,
+      "endOffset": 4680,
+      "codeContent": "public static void setInstance(co.edu.uniquindio.tests.config.TestConfig instance) {\n    TestConfig.instance \u003d instance;\n}",
+      "aiProbability": 95,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 3
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/support/AuthClient.java",
+      "timestamp": 1763022145002,
+      "startOffset": 231,
+      "endOffset": 252,
+      "codeContent": "import java.util.Map;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/support/AuthClient.java",
+      "timestamp": 1763022147648,
+      "startOffset": 231,
+      "endOffset": 256,
+      "codeContent": "import java.util.HashMap;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/support/AuthClient.java",
+      "timestamp": 1763022220673,
+      "startOffset": 512,
+      "endOffset": 2875,
+      "codeContent": "\n    // Estos son los valores por DEFECTO (para el realm \u0027taller\u0027)\n    private final String defaultTokenUrl;\n    private final String clientId;\n    private final String clientSecret;\n    private final String userInfoUrl;\n\n    private AuthClient() {\n        TestConfig config \u003d TestConfig.getInstance();\n        // Renombrado de tokenUrl a defaultTokenUrl para mayor claridad\n        this.defaultTokenUrl \u003d config.getKeycloakTokenUrl();\n        this.clientId \u003d config.getKeycloakClientId();\n        this.clientSecret \u003d config.getKeycloakClientSecret();\n        this.userInfoUrl \u003d config.getKeycloakUserInfoUrl();\n    }\n\n    public static AuthClient getInstance() {\n        if (instance \u003d\u003d null) {\n            synchronized (AuthClient.class) {\n                if (instance \u003d\u003d null) {\n                    instance \u003d new AuthClient();\n                }\n            }\n        }\n        return instance;\n    }\n\n    /**\n     * --- MÉTODO ANTIGUO (MODIFICADO) ---\n     * Realiza la petición al token endpoint POR DEFECTO (realm \u0027taller\u0027).\n     * Ahora delega la llamada al nuevo método sobrecargado.\n     */\n    public Response requestTokenResponse(String username, String password) {\n        log.debug(\"Solicitando token (por defecto) para user\u003d{}\", username);\n        // Llama al método de trabajo principal usando la URL por defecto\n        return requestTokenResponse(username, password, this.defaultTokenUrl);\n    }\n\n    /**\n     * --- MÉTODO NUEVO (SOBRECARGADO) ---\n     * Esta es la corrección clave.\n     * Realiza la petición al token endpoint en una URL ESPECÍFICA.\n     * Lo usaremos para llamar al realm \u0027master\u0027 cuando pidamos el token de admin.\n     */\n    public Response requestTokenResponse(String username, String password, String specificTokenUrl) {\n        log.debug(\"Solicitando token para user\u003d{} en URL\u003d{}\", username, specificTokenUrl);\n\n        Response response \u003d given()\n                // Corregido: RestAssured recomienda ContentType.URLENC\n                .contentType(ContentType.URLENC)\n                .formParam(\"grant_type\", \"password\")\n                .formParam(\"client_id\", clientId)\n                .formParam(\"client_secret\", clientSecret)\n                .formParam(\"username\", username)\n                .formParam(\"password\", password)\n                .when()\n                .post(specificTokenUrl); // \u003c-- Usa la URL específica",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 57
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/support/AuthClient.java",
+      "timestamp": 1763022225233,
+      "startOffset": 512,
+      "endOffset": 2875,
+      "codeContent": "\n    // Estos son los valores por DEFECTO (para el realm \u0027taller\u0027)\n    private final String defaultTokenUrl;\n    private final String clientId;\n    private final String clientSecret;\n    private final String userInfoUrl;\n\n    private AuthClient() {\n        TestConfig config \u003d TestConfig.getInstance();\n        // Renombrado de tokenUrl a defaultTokenUrl para mayor claridad\n        this.defaultTokenUrl \u003d config.getKeycloakTokenUrl();\n        this.clientId \u003d config.getKeycloakClientId();\n        this.clientSecret \u003d config.getKeycloakClientSecret();\n        this.userInfoUrl \u003d config.getKeycloakUserInfoUrl();\n    }\n\n    public static AuthClient getInstance() {\n        if (instance \u003d\u003d null) {\n            synchronized (AuthClient.class) {\n                if (instance \u003d\u003d null) {\n                    instance \u003d new AuthClient();\n                }\n            }\n        }\n        return instance;\n    }\n\n    /**\n     * --- MÉTODO ANTIGUO (MODIFICADO) ---\n     * Realiza la petición al token endpoint POR DEFECTO (realm \u0027taller\u0027).\n     * Ahora delega la llamada al nuevo método sobrecargado.\n     */\n    public Response requestTokenResponse(String username, String password) {\n        log.debug(\"Solicitando token (por defecto) para user\u003d{}\", username);\n        // Llama al método de trabajo principal usando la URL por defecto\n        return requestTokenResponse(username, password, this.defaultTokenUrl);\n    }\n\n    /**\n     * --- MÉTODO NUEVO (SOBRECARGADO) ---\n     * Esta es la corrección clave.\n     * Realiza la petición al token endpoint en una URL ESPECÍFICA.\n     * Lo usaremos para llamar al realm \u0027master\u0027 cuando pidamos el token de admin.\n     */\n    public Response requestTokenResponse(String username, String password, String specificTokenUrl) {\n        log.debug(\"Solicitando token para user\u003d{} en URL\u003d{}\", username, specificTokenUrl);\n\n        Response response \u003d given()\n                // Corregido: RestAssured recomienda ContentType.URLENC\n                .contentType(ContentType.URLENC)\n                .formParam(\"grant_type\", \"password\")\n                .formParam(\"client_id\", clientId)\n                .formParam(\"client_secret\", clientSecret)\n                .formParam(\"username\", username)\n                .formParam(\"password\", password)\n                .when()\n                .post(specificTokenUrl); // \u003c-- Usa la URL específica",
+      "aiProbability": 70,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 57
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/support/AuthClient.java",
+      "timestamp": 1763022228273,
+      "startOffset": 512,
+      "endOffset": 2875,
+      "codeContent": "\n    // Estos son los valores por DEFECTO (para el realm \u0027taller\u0027)\n    private final String defaultTokenUrl;\n    private final String clientId;\n    private final String clientSecret;\n    private final String userInfoUrl;\n\n    private AuthClient() {\n        TestConfig config \u003d TestConfig.getInstance();\n        // Renombrado de tokenUrl a defaultTokenUrl para mayor claridad\n        this.defaultTokenUrl \u003d config.getKeycloakTokenUrl();\n        this.clientId \u003d config.getKeycloakClientId();\n        this.clientSecret \u003d config.getKeycloakClientSecret();\n        this.userInfoUrl \u003d config.getKeycloakUserInfoUrl();\n    }\n\n    public static AuthClient getInstance() {\n        if (instance \u003d\u003d null) {\n            synchronized (AuthClient.class) {\n                if (instance \u003d\u003d null) {\n                    instance \u003d new AuthClient();\n                }\n            }\n        }\n        return instance;\n    }\n\n    /**\n     * --- MÉTODO ANTIGUO (MODIFICADO) ---\n     * Realiza la petición al token endpoint POR DEFECTO (realm \u0027taller\u0027).\n     * Ahora delega la llamada al nuevo método sobrecargado.\n     */\n    public Response requestTokenResponse(String username, String password) {\n        log.debug(\"Solicitando token (por defecto) para user\u003d{}\", username);\n        // Llama al método de trabajo principal usando la URL por defecto\n        return requestTokenResponse(username, password, this.defaultTokenUrl);\n    }\n\n    /**\n     * --- MÉTODO NUEVO (SOBRECARGADO) ---\n     * Esta es la corrección clave.\n     * Realiza la petición al token endpoint en una URL ESPECÍFICA.\n     * Lo usaremos para llamar al realm \u0027master\u0027 cuando pidamos el token de admin.\n     */\n    public Response requestTokenResponse(String username, String password, String specificTokenUrl) {\n        log.debug(\"Solicitando token para user\u003d{} en URL\u003d{}\", username, specificTokenUrl);\n\n        Response response \u003d given()\n                // Corregido: RestAssured recomienda ContentType.URLENC\n                .contentType(ContentType.URLENC)\n                .formParam(\"grant_type\", \"password\")\n                .formParam(\"client_id\", clientId)\n                .formParam(\"client_secret\", clientSecret)\n                .formParam(\"username\", username)\n                .formParam(\"password\", password)\n                .when()\n                .post(specificTokenUrl); // \u003c-- Usa la URL específica",
+      "aiProbability": 70,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 57
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/support/AuthClient.java",
+      "timestamp": 1763022232154,
+      "startOffset": 512,
+      "endOffset": 2875,
+      "codeContent": "\n    // Estos son los valores por DEFECTO (para el realm \u0027taller\u0027)\n    private final String defaultTokenUrl;\n    private final String clientId;\n    private final String clientSecret;\n    private final String userInfoUrl;\n\n    private AuthClient() {\n        TestConfig config \u003d TestConfig.getInstance();\n        // Renombrado de tokenUrl a defaultTokenUrl para mayor claridad\n        this.defaultTokenUrl \u003d config.getKeycloakTokenUrl();\n        this.clientId \u003d config.getKeycloakClientId();\n        this.clientSecret \u003d config.getKeycloakClientSecret();\n        this.userInfoUrl \u003d config.getKeycloakUserInfoUrl();\n    }\n\n    public static AuthClient getInstance() {\n        if (instance \u003d\u003d null) {\n            synchronized (AuthClient.class) {\n                if (instance \u003d\u003d null) {\n                    instance \u003d new AuthClient();\n                }\n            }\n        }\n        return instance;\n    }\n\n    /**\n     * --- MÉTODO ANTIGUO (MODIFICADO) ---\n     * Realiza la petición al token endpoint POR DEFECTO (realm \u0027taller\u0027).\n     * Ahora delega la llamada al nuevo método sobrecargado.\n     */\n    public Response requestTokenResponse(String username, String password) {\n        log.debug(\"Solicitando token (por defecto) para user\u003d{}\", username);\n        // Llama al método de trabajo principal usando la URL por defecto\n        return requestTokenResponse(username, password, this.defaultTokenUrl);\n    }\n\n    /**\n     * --- MÉTODO NUEVO (SOBRECARGADO) ---\n     * Esta es la corrección clave.\n     * Realiza la petición al token endpoint en una URL ESPECÍFICA.\n     * Lo usaremos para llamar al realm \u0027master\u0027 cuando pidamos el token de admin.\n     */\n    public Response requestTokenResponse(String username, String password, String specificTokenUrl) {\n        log.debug(\"Solicitando token para user\u003d{} en URL\u003d{}\", username, specificTokenUrl);\n\n        Response response \u003d given()\n                // Corregido: RestAssured recomienda ContentType.URLENC\n                .contentType(ContentType.URLENC)\n                .formParam(\"grant_type\", \"password\")\n                .formParam(\"client_id\", clientId)\n                .formParam(\"client_secret\", clientSecret)\n                .formParam(\"username\", username)\n                .formParam(\"password\", password)\n                .when()\n                .post(specificTokenUrl); // \u003c-- Usa la URL específica",
+      "aiProbability": 70,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 57
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/support/AuthClient.java",
+      "timestamp": 1763022268567,
+      "startOffset": 231,
+      "endOffset": 252,
+      "codeContent": "import java.util.Map;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/support/AuthClient.java",
+      "timestamp": 1763022270072,
+      "startOffset": 231,
+      "endOffset": 256,
+      "codeContent": "import java.util.HashMap;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "/AuthClient.java",
+      "timestamp": 1763022296496,
+      "startOffset": 843,
+      "endOffset": 891,
+      "codeContent": "co.edu.uniquindio.tests.config.TestConfig config",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "/AuthClient.java",
+      "timestamp": 1763022296503,
+      "startOffset": 863,
+      "endOffset": 884,
+      "codeContent": "this.config \u003d config;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/support/AuthClient.java",
+      "timestamp": 1763022296526,
+      "startOffset": 863,
+      "endOffset": 893,
+      "codeContent": "\n        this.config \u003d config;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 2
+    },
+    {
+      "filePath": "/_Dummy_.java",
+      "timestamp": 1763022300377,
+      "startOffset": 38,
+      "endOffset": 86,
+      "codeContent": "co.edu.uniquindio.tests.config.TestConfig config",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/support/AuthClient.java",
+      "timestamp": 1763022381089,
+      "startOffset": 140,
+      "endOffset": 4587,
+      "codeContent": "io.restassured.http.ContentType; // Importa ContentType\nimport lombok.extern.slf4j.Slf4j;\n\nimport static io.restassured.RestAssured.given;\n\n/**\n * Cliente encargado de manejar la autenticación y obtener información del usuario\n * desde Keycloak (u otro servidor compatible con OpenID Connect).\n */\n@Slf4j\npublic class AuthClient {\n\n    private static AuthClient instance;\n\n    // Estos son los valores por DEFECTO (para el realm \u0027taller\u0027)\n    private final String defaultTokenUrl;\n    private final String clientId;\n    private final String clientSecret;\n    private final String userInfoUrl;\n\n    private AuthClient() {\n        TestConfig config \u003d TestConfig.getInstance();\n        // Renombrado de tokenUrl a defaultTokenUrl para mayor claridad\n        this.defaultTokenUrl \u003d config.getKeycloakTokenUrl(); \n        this.clientId \u003d config.getKeycloakClientId();\n        this.clientSecret \u003d config.getKeycloakClientSecret();\n        this.userInfoUrl \u003d config.getKeycloakUserInfoUrl();\n    }\n\n    public static AuthClient getInstance() {\n        if (instance \u003d\u003d null) {\n            synchronized (AuthClient.class) {\n                if (instance \u003d\u003d null) {\n                    instance \u003d new AuthClient();\n                }\n            }\n        }\n        return instance;\n    }\n\n    /**\n     * --- MÉTODO ANTIGUO (MODIFICADO) ---\n     * Realiza la petición al token endpoint POR DEFECTO (realm \u0027taller\u0027).\n     * Ahora delega la llamada al nuevo método sobrecargado.\n     */\n    public Response requestTokenResponse(String username, String password) {\n        log.debug(\"Solicitando token (por defecto) para user\u003d{}\", username);\n        // Llama al método de trabajo principal usando la URL por defecto\n        return requestTokenResponse(username, password, this.defaultTokenUrl);\n    }\n\n    /**\n     * --- MÉTODO NUEVO (SOBRECARGADO) ---\n     * Esta es la corrección clave.\n     * Realiza la petición al token endpoint en una URL ESPECÍFICA.\n     * Lo usaremos para llamar al realm \u0027master\u0027 cuando pidamos el token de admin.\n     */\n    public Response requestTokenResponse(String username, String password, String specificTokenUrl) {\n        log.debug(\"Solicitando token para user\u003d{} en URL\u003d{}\", username, specificTokenUrl);\n\n        Response response \u003d given()\n                // Corregido: RestAssured recomienda ContentType.URLENC\n                .contentType(ContentType.URLENC) \n                .formParam(\"grant_type\", \"password\")\n                .formParam(\"client_id\", clientId)\n                .formParam(\"client_secret\", clientSecret)\n                .formParam(\"username\", username)\n                .formParam(\"password\", password)\n                .when()\n                .post(specificTokenUrl); // \u003c-- Usa la URL específica\n\n        log.debug(\"Token endpoint → status\u003d{} body\u003d{}\",\n                response.statusCode(), safeBody(response));\n\n        return response;\n    }\n\n\n    /**\n     * Obtiene el access_token y lanza excepción si la respuesta no es exitosa.\n     * (Este método no cambia, seguirá usando el realm por defecto \u0027taller\u0027)\n     */\n    public String getAccessToken(String username, String password) {\n        Response r \u003d requestTokenResponse(username, password); // Llama al método por defecto\n        if (r.statusCode() !\u003d 200) {\n            log.error(\"Error obteniendo token. Status: {}, Body: {}\", r.statusCode(), safeBody(r));\n            throw new RuntimeException(\"No se pudo obtener el token de acceso. Status: \" + r.statusCode());\n        }\n        String token \u003d r.jsonPath().getString(\"access_token\");\n        log.debug(\"Token obtenido correctamente para {} ({} caracteres)\", username, token !\u003d null ? token.length() : 0);\n        return token;\n    }\n\n    /**\n     * Llama al endpoint userinfo con el token proporcionado.\n     * (Este método no cambia)\n     */\n    public Response getUserInfo(String accessToken) {\n        log.debug(\"Llamando al endpoint userinfo\");\n        Response response \u003d given()\n                .header(\"Authorization\", \"Bearer \" + accessToken)\n                .when()\n                .get(userInfoUrl);\n\n        log.debug(\"Userinfo → status\u003d{} body\u003d{}\", response.statusCode(), safeBody(response));\n        return response;\n    }\n\n    private String safeBody(Response response) {\n        try {\n            return response.getBody() !\u003d null ? response.getBody().asString() : \"(sin cuerpo)\";\n        } catch (Exception e) {\n            return \"(error leyendo body)\";\n        }\n    }\n}",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 116
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/support/TokenClient.java",
+      "timestamp": 1763071235401,
+      "startOffset": 2464,
+      "endOffset": 4841,
+      "codeContent": "                \n                tokenCache.put(cacheKey, new TokenInfo(newToken, expiresIn));\n                log.debug(\"Nuevo token guardado en caché para {} (expira en {}s)\", username, expiresIn);\n                return newToken;\n            } else {\n                log.warn(\"No se obtuvo token (status {}). Body: {}\", response.statusCode(), response.getBody().asString());\n                return null;\n            }\n        } catch (Exception e) {\n            log.error(\"Error al solicitar token para {}: {}\", username, e.getMessage());\n            throw new RuntimeException(\"Error al comunicarse con Keycloak: \" + e.getMessage());\n        }\n    }\n\n    /**\n     * Obtiene el token del usuario administrador configurado en TestConfig.\n     * --- MÉTODO CORREGIDO ---\n     * Llama al realm \u0027master\u0027 con el client_id \u0027admin-cli\u0027 y sin secret.\n     */\n    public String getAdminToken() {\n        String cacheKey \u003d \"admin_master_token\"; // Clave de caché específica\n        TokenInfo tokenInfo \u003d tokenCache.get(cacheKey);\n\n        if (tokenInfo !\u003d null \u0026\u0026 !tokenInfo.isExpired()) {\n            log.debug(\"Reutilizando token de admin en caché\");\n            return tokenInfo.getAccessToken();\n        }\n\n        log.debug(\"Solicitando nuevo token de admin al realm \u0027master\u0027\");\n        String newToken;\n        int expiresIn \u003d 240; // fallback\n\n        try {\n            // Obtenemos las URLs y credenciales CORRECTAS\n            String masterTokenUrl \u003d config.getMasterTokenUrl(); // http://.../master/...\n            String adminClientId \u003d config.getAdminClientId();   // \"admin-cli\"\n\n            // Llamamos al método de AuthClient que lo soporta\n            Response response \u003d authClient.requestTokenResponse(\n                    config.getAdminUsername(),    // \"admin\"\n                    config.getAdminPassword(),    // \"admin123\"\n                    masterTokenUrl,               // URL del realm master\n                    adminClientId,                // \"admin-cli\"\n                    null                          // Sin client secret\n            );\n\n            if (response.statusCode() \u003d\u003d 200) {\n                newToken \u003d response.jsonPath().getString(\"access_token\");\n                Integer exp \u003d response.jsonPath().getInt(\"expires_in\");\n\n                if (exp !\u003d null \u0026\u0026 exp \u003e 0) {\n                    expiresIn \u003d exp;\n                }\n                ",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 54
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/api-gateway/src/main/java/co/edu/uniquindio/gateway/ApiGatewayApplication.java",
+      "timestamp": 1763076989977,
+      "startOffset": 156,
+      "endOffset": 404,
+      "codeContent": "// Descomenta esta línea si usas Eureka o Consul. Si no, no es necesaria.\n// import org.springframework.cloud.client.discovery.EnableDiscoveryClient;\n\n@SpringBootApplication\n// @EnableDiscoveryClient // Opcional, dependiendo de tu service discovery",
+      "aiProbability": 95,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 5
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/support/TokenClient.java",
+      "timestamp": 1763079275989,
+      "startOffset": 307,
+      "endOffset": 6048,
+      "codeContent": "@Slf4j\n@Getter\npublic class TokenClient {\n\n    private static TokenClient instance;\n\n    private final TestConfig config;\n    private final AuthClient authClient;\n    private final ConcurrentMap\u003cString, TokenInfo\u003e tokenCache;\n\n    private TokenClient() {\n        this.config \u003d TestConfig.getInstance();\n        this.authClient \u003d AuthClient.getInstance();\n        this.tokenCache \u003d new ConcurrentHashMap\u003c\u003e();\n    }\n\n    public static TokenClient getInstance() {\n        if (instance \u003d\u003d null) {\n            synchronized (TokenClient.class) {\n                if (instance \u003d\u003d null) {\n                    instance \u003d new TokenClient();\n                }\n            }\n        }\n        return instance;\n    }\n\n    // Metodo para obtener el token de cualquier usuario\n    public String getTokenForUser(String username, String password) {\n        return getToken(username, password);\n        // Reusa la lógica interna\n    }\n\n    /**\n     * Obtiene un token de acceso para un usuario (del realm \u0027taller\u0027),\n     * usando la caché si aún no expiró.\n     */\n    public String getToken(String username, String password) {\n        String cacheKey \u003d username;\n        TokenInfo tokenInfo \u003d tokenCache.get(cacheKey);\n\n        if (tokenInfo !\u003d null \u0026\u0026 !tokenInfo.isExpired()) {\n            log.debug(\"Reutilizando token en caché para usuario {}\", username);\n            return tokenInfo.getAccessToken();\n        }\n\n        log.debug(\"Solicitando nuevo token para usuario {}\", username);\n        String newToken;\n        int expiresIn \u003d 240; // fallback (4 min)\n\n        try {\n            // Llama al método por defecto de AuthClient (que usa realm \u0027taller\u0027)\n            Response response \u003d authClient.requestTokenResponse(username, password);\n            if (response.statusCode() \u003d\u003d 200) {\n                newToken \u003d response.jsonPath().getString(\"access_token\");\n                Integer exp \u003d response.jsonPath().getInt(\"expires_in\");\n\n                if (exp !\u003d null \u0026\u0026 exp \u003e 0) {\n                    expiresIn \u003d exp;\n                }\n\n                tokenCache.put(cacheKey, new TokenInfo(newToken, expiresIn));\n                log.debug(\"Nuevo token guardado en caché para {} (expira en {}s)\", username, expiresIn);\n                return newToken;\n            } else {\n                log.warn(\"No se obtuvo token (status {}). Body: {}\", response.statusCode(), response.getBody().asString());\n                return null;\n            }\n        } catch (Exception e) {\n            log.error(\"Error al solicitar token para {}: {}\", username, e.getMessage());\n            throw new RuntimeException(\"Error al comunicarse con Keycloak: \" + e.getMessage(), e);\n        }\n    }\n\n    /**\n     * Obtiene el token del usuario administrador configurado en TestConfig.\n     * --- MÉTODO CORREGIDO ---\n     * Llama al realm \u0027taller\u0027 (NO a \u0027master\u0027) con el client_id \u0027admin-cli\u0027.\n     */\n    public String getAdminToken() {\n        // Usamos una clave de caché diferente para el token de admin\n        String cacheKey \u003d config.getAdminUsername() + \"_admin_token\";\n        TokenInfo tokenInfo \u003d tokenCache.get(cacheKey);\n\n        if (tokenInfo !\u003d null \u0026\u0026 !tokenInfo.isExpired()) {\n            log.debug(\"Reutilizando token de admin en caché\");\n            return tokenInfo.getAccessToken();\n        }\n\n        log.debug(\"Solicitando nuevo token de admin al realm \u0027{}\u0027\", config.getKeycloakRealm());\n        String newToken;\n        int expiresIn \u003d 240; // fallback\n\n        try {\n            // \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n            // ⬇️⬇️⬇️ INICIO DE LA CORRECCIÓN ⬇️⬇️⬇️\n            // \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n\n            // Usamos la URL del realm \u0027taller\u0027, NO la del realm \u0027master\u0027\n            String tallerTokenUrl \u003d config.getKeycloakTokenUrl();\n            String adminClientId \u003d config.getAdminClientId();\n\n            // Llamamos al método de AuthClient que lo soporta\n            Response response \u003d authClient.requestTokenResponse(\n                    config.getAdminUsername(),    // \"admin\"\n                    config.getAdminPassword(),    // \"admin123\"\n                    tallerTokenUrl,               // URL del realm \u0027taller\u0027\n                    adminClientId,                // \"admin-cli\"\n                    null                          // Sin client secret\n            );\n            \n            // \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n            // ⬆️⬆️⬆️ FIN DE LA CORRECCIÓN ⬆️⬆️⬆️\n            // \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n\n            if (response.statusCode() \u003d\u003d 200) {\n                newToken \u003d response.jsonPath().getString(\"access_token\");\n                Integer exp \u003d response.jsonPath().getInt(\"expires_in\");\n\n                if (exp !\u003d null \u0026\u0026 exp \u003e 0) {\n                    expiresIn \u003d exp;\n                }\n\n                tokenCache.put(cacheKey, new TokenInfo(newToken, expiresIn));\n                log.debug(\"Nuevo token de ADMIN guardado en caché (expira en {}s)\", expiresIn);\n                return newToken;\n            } else {\n                log.error(\"¡FALLO CRÍTICO! No se pudo obtener el token de administrador.\");\n                log.error(\"El realm \u0027{}\u0027 de Keycloak en {} respondió con status {}. Body: {}\",\n                        config.getKeycloakRealm(), tallerTokenUrl, response.statusCode(), response.getBody().asString());\n                throw new RuntimeException(\"No se pudo obtener el token de administrador. Revisa la configuración.\");\n            }\n        } catch (Exception e) {\n            log.error(\"Error al solicitar token de admin: {}\", e.getMessage());\n            throw new RuntimeException(\"Error al comunicarse con Keycloak (admin",
+      "aiProbability": 95,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 135
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/hooks/Hooks.java",
+      "timestamp": 1763112024797,
+      "startOffset": 705,
+      "endOffset": 1228,
+      "codeContent": "log.info(\"CONFIG RESUELTA:\");\nlog.info(\" - apiBaseUrl \u003d {}\", config.getApiBaseUrl());\nlog.info(\" - keycloakUrl \u003d {}\", config.getKeycloakUrl());\nlog.info(\" - keycloakTokenUrl \u003d {}\", config.getKeycloakTokenUrl());\n// Intenta obtener token admin sin lanzar (solo loguear)\ntry {\n    String t \u003d tokenClient.getAdminToken();\n    log.info(\" - admin token obtenido (longitud): {}\", t !\u003d null ? t.length() : \"null\");\n} catch (Exception e) {\n    log.warn(\" - No se pudo obtener token admin en beforeScenario: {}\", e.getMessage());\n}\n",
+      "aiProbability": 95,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 12
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/hooks/Hooks.java",
+      "timestamp": 1763112953547,
+      "startOffset": 1370,
+      "endOffset": 1402,
+      "codeContent": "co.edu.uniquindio.tests.support.",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/test-automation/src/test/java/co/edu/uniquindio/tests/hooks/Hooks.java",
+      "timestamp": 1763112953561,
+      "startOffset": 90,
+      "endOffset": 145,
+      "codeContent": "import co.edu.uniquindio.tests.support.ScenarioContext;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    }
+  ],
+  "toolStats": {
+    "GitHub Copilot": {
+      "usageCount": 34,
+      "totalLines": 778
+    }
+  }
+}
