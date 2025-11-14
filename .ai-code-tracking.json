@@ -374,12 +374,364 @@
       "aiTool": "GitHub Copilot",
       "detectionMethod": "REALTIME_SPEED_ANALYSIS",
       "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/controller/PerfilController.java",
+      "timestamp": 1763139141779,
+      "startOffset": 2997,
+      "endOffset": 4011,
+      "codeContent": "/**\n     * Endpoint para que el Gateway (u otro admin) obtenga un perfil por ID de usuario.\n     * En una app real, esto buscaría en un PerfilRepository.\n     */\n    @GetMapping(\"/por-usuario/{userId}\")\n    public ResponseEntity\u003cPerfilResponse\u003e obtenerPerfilPorUsuarioId(@PathVariable UUID userId) {\n        // --- STUB (Simulación) ---\n        // En una implementación real, aquí llamarías a:\n        // Perfil perfil \u003d perfilService.obtenerPorUsuarioId(userId);\n        // y construirías la respuesta.\n        \n        // Devolvemos datos dummy para que la agregación funcione:\n        PerfilRequest dummyRequest \u003d new PerfilRequest();\n        dummyRequest.setApodo(\"PerfilStub-\" + userId.toString().substring(0, 4));\n        dummyRequest.setBiografia(\"Biografía de prueba para el usuario \" + userId);\n        dummyRequest.setPaisResidencia(\"Colombia\");\n\n        PerfilResponse response \u003d new PerfilResponse(userId, dummyRequest);\n        return ResponseEntity.ok(response);\n        // --- Fin del STUB ---\n    }",
+      "aiProbability": 95,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 21
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/api-gateway/src/main/java/co/edu/uniquindio/gateway/ApiGatewayApplication.java",
+      "timestamp": 1763139303498,
+      "startOffset": 229,
+      "endOffset": 1005,
+      "codeContent": "import org.springframework.context.annotation.Bean; // Importar\nimport org.springframework.web.reactive.function.client.WebClient; // Importar\n\n@SpringBootApplication\n@EnableDiscoveryClient\npublic class ApiGatewayApplication {\n\n    public static void main(String[] args) {\n        SpringApplication.run(ApiGatewayApplication.class, args);\n    }\n\n    // \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n    // ⬇️⬇️⬇️ BEAN NUEVO REQUERIDO ⬇️⬇️⬇️\n    // \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n    /**\n     * Provee un builder de WebClient para que los controladores\n     * y servicios puedan inyectarlo y hacer llamadas HTTP.\n     */\n    @Bean\n    public WebClient.Builder webClientBuilder() {\n        return WebClient.builder();\n    }",
+      "aiProbability": 95,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 22
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/api-gateway/src/main/java/co/edu/uniquindio/gateway/dto/UsuarioResponse.java",
+      "timestamp": 1763139355826,
+      "startOffset": 0,
+      "endOffset": 73,
+      "codeContent": "package co.edu.uniquindio.gateway.dto;\n\npublic class UsuarioResponse {\n}\n",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 5
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/api-gateway/src/main/java/co/edu/uniquindio/gateway/dto/UsuarioResponse.java",
+      "timestamp": 1763139363822,
+      "startOffset": 40,
+      "endOffset": 659,
+      "codeContent": "import java.util.UUID;\n\n// DTO espejo de co.edu.uniquindio.tallerapi2.dto.UsuarioResponse\n// Necesario para que el Gateway pueda deserializar la respuesta del microservicio\npublic class UsuarioResponse {\n    private UUID id;\n    private String nombre;\n    private String email;\n\n    // Getters y Setters\n    public UUID getId() { return id; }\n    public void setId(UUID id) { this.id \u003d id; }\n    public String getNombre() { return nombre; }\n    public void setNombre(String nombre) { this.nombre \u003d nombre; }\n    public String getEmail() { return email; }\n    public void setEmail(String email) { this.email \u003d email; }\n}",
+      "aiProbability": 70,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 17
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/api-gateway/src/main/java/co/edu/uniquindio/gateway/dto/PerfilResponse.java",
+      "timestamp": 1763139383675,
+      "startOffset": 0,
+      "endOffset": 72,
+      "codeContent": "package co.edu.uniquindio.gateway.dto;\n\npublic class PerfilResponse {\n}\n",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 5
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/api-gateway/src/main/java/co/edu/uniquindio/gateway/dto/PerfilResponse.java",
+      "timestamp": 1763139389152,
+      "startOffset": 40,
+      "endOffset": 1853,
+      "codeContent": "import java.util.Map;\nimport java.util.UUID;\n\n// DTO espejo de co.edu.uniquindio.tallerapi2.dto.PerfilResponse\npublic class PerfilResponse {\n    private UUID userId;\n    private String apodo;\n    private String biografia;\n    private String paginaPersonal;\n    private String direccion;\n    private String organizacion;\n    private String paisResidencia;\n    private Boolean informacionPublica;\n    private Map\u003cString, String\u003e redesSociales;\n\n    // Getters y Setters\n    public UUID getUserId() { return userId; }\n    public void setUserId(UUID userId) { this.userId \u003d userId; }\n    public String getApodo() { return apodo; }\n    public void setApodo(String apodo) { this.apodo \u003d apodo; }\n    public String getBiografia() { return biografia; }\n    public void setBiografia(String biografia) { this.biografia \u003d biografia; }\n    public String getPaginaPersonal() { return paginaPersonal; }\n    public void setPaginaPersonal(String paginaPersonal) { this.paginaPersonal \u003d paginaPersonal; }\n    public String getDireccion() { return direccion; }\n    public void setDireccion(String direccion) { this.direccion \u003d direccion; }\n    public String getOrganizacion() { return organizacion; }\n    public void setOrganizacion(String organizacion) { this.organizacion \u003d organizacion; }\n    public String getPaisResidencia() { return paisResidencia; }\n    public void setPaisResidencia(String paisResidencia) { this.paisResidencia \u003d paisResidencia; }\n    public Boolean getInformacionPublica() { return informacionPublica; }\n    public void setInformacionPublica(Boolean informacionPublica) { this.informacionPublica \u003d informacionPublica; }\n    public Map\u003cString, String\u003e getRedesSociales() { return redesSociales; }\n    public void setRedesSociales(Map\u003cString, String\u003e redesSociales) { this.redesSociales \u003d redesSociales; }\n}",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 35
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/api-gateway/src/main/java/co/edu/uniquindio/gateway/dto/UsuarioCompletoResponse.java",
+      "timestamp": 1763139411973,
+      "startOffset": 0,
+      "endOffset": 81,
+      "codeContent": "package co.edu.uniquindio.gateway.dto;\n\npublic class UsuarioCompletoResponse {\n}\n",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 5
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/api-gateway/src/main/java/co/edu/uniquindio/gateway/dto/UsuarioCompletoResponse.java",
+      "timestamp": 1763139417284,
+      "startOffset": 40,
+      "endOffset": 713,
+      "codeContent": "// DTO de Agregación. Contiene la información de ambos servicios.\npublic class UsuarioCompletoResponse {\n    \n    private UsuarioResponse usuario;\n    private PerfilResponse perfil;\n\n    // Constructor para la agregación\n    public UsuarioCompletoResponse(UsuarioResponse usuario, PerfilResponse perfil) {\n        this.usuario \u003d usuario;\n        this.perfil \u003d perfil;\n    }\n\n    // Getters y Setters\n    public UsuarioResponse getUsuario() { return usuario; }\n    public void setUsuario(UsuarioResponse usuario) { this.usuario \u003d usuario; }\n    public PerfilResponse getPerfil() { return perfil; }\n    public void setPerfil(PerfilResponse perfil) { this.perfil \u003d perfil; }\n}",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 18
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/api-gateway/src/main/java/co/edu/uniquindio/gateway/controller/UsuarioAgregadoController.java",
+      "timestamp": 1763139451879,
+      "startOffset": 0,
+      "endOffset": 90,
+      "codeContent": "package co.edu.uniquindio.gateway.controller;\n\npublic class UsuarioAgregadoController {\n}\n",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 5
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/api-gateway/src/main/java/co/edu/uniquindio/gateway/controller/UsuarioAgregadoController.java",
+      "timestamp": 1763139456234,
+      "startOffset": 47,
+      "endOffset": 3239,
+      "codeContent": "import co.edu.uniquindio.gateway.dto.PerfilResponse;\nimport co.edu.uniquindio.gateway.dto.UsuarioCompletoResponse;\nimport co.edu.uniquindio.gateway.dto.UsuarioResponse;\nimport org.springframework.http.HttpHeaders;\nimport org.springframework.http.HttpStatus;\nimport org.springframework.http.ResponseEntity;\nimport org.springframework.web.bind.annotation.*;\nimport org.springframework.web.reactive.function.client.WebClient;\nimport org.springframework.web.server.ResponseStatusException;\nimport reactor.core.publisher.Mono;\n\nimport java.util.UUID;\n\n@RestController\n@RequestMapping(\"/api/usuario-completo\")\npublic class UsuarioAgregadoController {\n\n    private final WebClient webClientTallerApi;\n\n    public UsuarioAgregadoController(WebClient.Builder webClientBuilder) {\n        // Creamos un WebClient que apunta al servicio \u0027taller-api-2\u0027\n        // \u0027taller-api-2\u0027 es el nombre del servicio en docker-compose.yml\n        this.webClientTallerApi \u003d webClientBuilder\n                .baseUrl(\"http://taller-api-2:8080\")\n                .build();\n    }\n\n    /**\n     * Implementa el requisito R6d:\n     * 1. Recibe una solicitud de \"datos completos\".\n     * 2. Divide la solicitud en dos llamadas (Fan-out).\n     * 3. Unifica las respuestas (Fan-in).\n     * 4. Devuelve una respuesta unificada.\n     */\n    @GetMapping(\"/{id}\")\n    public Mono\u003cResponseEntity\u003cUsuarioCompletoResponse\u003e\u003e getUsuarioCompleto(\n            @PathVariable String id,\n            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {\n\n        // 1. (Fan-out) Preparamos la llamada al endpoint de Usuarios\n        Mono\u003cUsuarioResponse\u003e usuarioMono \u003d webClientTallerApi.get()\n                .uri(\"/api/usuarios/\" + id)\n                .header(HttpHeaders.AUTHORIZATION, authorizationHeader) // Pasar el token\n                .retrieve()\n                // Si el usuario no existe, lanzamos un 404\n                .onStatus(\n                        status -\u003e status \u003d\u003d HttpStatus.NOT_FOUND,\n                        clientResponse -\u003e Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, \"Usuario no encontrado\"))\n                )\n                .bodyToMono(UsuarioResponse.class);\n\n        // 2. (Fan-out) Preparamos la llamada al endpoint de Perfiles\n        Mono\u003cPerfilResponse\u003e perfilMono \u003d webClientTallerApi.get()\n                .uri(\"/api/perfiles/por-usuario/\" + id)\n                .header(HttpHeaders.AUTHORIZATION, authorizationHeader) // Pasar el token\n                .retrieve()\n                .bodyToMono(PerfilResponse.class)\n                // Si el perfil no existe (404) o da error, simplemente devolvemos un objeto vacío\n                .onErrorResume(e -\u003e Mono.just(new PerfilResponse())); \n\n        // 3. (Fan-in) Combinamos ambas respuestas cuando estén listas\n        return Mono.zip(usuarioMono, perfilMono)\n                .map(tupla -\u003e {\n                    // tupla.getT1() es la respuesta de usuarioMono\n                    // tupla.getT2() es la respuesta de perfilMono\n                    return new UsuarioCompletoResponse(tupla.getT1(), tupla.getT2());\n                })\n                .map(respuestaUnificada -\u003e ResponseEntity.ok(respuestaUnificada));\n    }\n}",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 70
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/dto/events/UsuarioEliminadoEvent.java",
+      "timestamp": 1763139554491,
+      "startOffset": 0,
+      "endOffset": 89,
+      "codeContent": "package co.edu.uniquindio.tallerapi2.dto.events;\n\npublic class UsuarioEliminadoEvent {\n}\n",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 5
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/dto/events/UsuarioEliminadoEvent.java",
+      "timestamp": 1763139559600,
+      "startOffset": 50,
+      "endOffset": 1308,
+      "codeContent": "import com.fasterxml.jackson.annotation.JsonFormat;\nimport java.time.LocalDateTime;\nimport java.util.UUID;\n\n// DTO para el evento de usuario eliminado\npublic class UsuarioEliminadoEvent {\n\n    private UUID usuarioId;\n    private String email;\n    \n    @JsonFormat(shape \u003d JsonFormat.Shape.STRING, pattern \u003d \"yyyy-MM-dd\u0027T\u0027HH:mm:ss\")\n    private LocalDateTime timestamp;\n\n    private String eventType;\n\n    // Constructores\n    public UsuarioEliminadoEvent() {\n        this.timestamp \u003d LocalDateTime.now();\n        this.eventType \u003d \"USUARIO_ELIMINADO\";\n    }\n\n    public UsuarioEliminadoEvent(UUID usuarioId, String email) {\n        this();\n        this.usuarioId \u003d usuarioId;\n        this.email \u003d email;\n    }\n\n    // Getters y Setters\n    public UUID getUsuarioId() { return usuarioId; }\n    public void setUsuarioId(UUID usuarioId) { this.usuarioId \u003d usuarioId; }\n    public String getEmail() { return email; }\n    public void setEmail(String email) { this.email \u003d email; }\n    public LocalDateTime getTimestamp() { return timestamp; }\n    public void setTimestamp(LocalDateTime timestamp) { this.timestamp \u003d timestamp; }\n    public String getEventType() { return eventType; }\n    public void setEventType(String eventType) { this.eventType \u003d eventType; }\n}",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 37
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763139620719,
+      "startOffset": 623,
+      "endOffset": 672,
+      "codeContent": "private Eliminados eliminados \u003d new Eliminados();",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763139689838,
+      "startOffset": 46,
+      "endOffset": 4482,
+      "codeContent": "// ... (imports) ...\n// ⬇️ Importar el nuevo DTO de evento ⬇️\nimport co.edu.uniquindio.tallerapi2.dto.events.UsuarioEliminadoEvent; \n\nimport java.util.HashMap;\nimport java.util.Map;\n\n@Configuration\npublic class RabbitMQConfig {\n\n    private final AppRabbitMQProperties properties;\n\n    public RabbitMQConfig(AppRabbitMQProperties properties) {\n        this.properties \u003d properties;\n    }\n\n    // \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d EXCHANGE \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n    @Bean\n    public TopicExchange appExchange() {\n        return new TopicExchange(properties.getExchange());\n    }\n\n    // \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d QUEUES \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n    @Bean\n    public Queue usuariosQueue() {\n        return new Queue(properties.getUsuarios().getQueue(), true);\n    }\n\n    @Bean\n    public Queue sesionesQueue() {\n        return new Queue(properties.getSesiones().getQueue(), true);\n    }\n\n    @Bean\n    public Queue passwordQueue() {\n        return new Queue(properties.getPassword().getQueue(), true);\n    }\n\n    // ⬇️ --- AÑADIR NUEVO BEAN DE COLA --- ⬇️\n    @Bean\n    public Queue usuariosEliminadosQueue() {\n        return new Queue(properties.getUsuarios().getEliminados().getQueue(), true);\n    }\n    // ⬆️ --- FIN DE LO AÑADIDO --- ⬆️\n\n\n    // \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d BINDINGS \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n    @Bean\n    public Binding usuariosBinding(Queue usuariosQueue, TopicExchange appExchange) {\n        return BindingBuilder.bind(usuariosQueue)\n                .to(appExchange)\n                .with(properties.getUsuarios().getRoutingKey());\n    }\n\n    @Bean\n    public Binding sesionesBinding(Queue sesionesQueue, TopicExchange appExchange) {\n        return BindingBuilder.bind(sesionesQueue)\n                .to(appExchange)\n                .with(properties.getSesiones().getRoutingKey());\n    }\n\n    @Bean\n    public Binding passwordBinding(Queue passwordQueue, TopicExchange appExchange) {\n        return BindingBuilder.bind(passwordQueue)\n                .to(appExchange)\n                .with(properties.getPassword().getRoutingKey());\n    }\n\n    // ⬇️ --- AÑADIR NUEVO BEAN DE BINDING --- ⬇️\n    @Bean\n    public Binding usuariosEliminadosBinding(Queue usuariosEliminadosQueue, TopicExchange appExchange) {\n        return BindingBuilder.bind(usuariosEliminadosQueue)\n                .to(appExchange)\n                .with(properties.getUsuarios().getEliminados().getRoutingKey());\n    }\n    // ⬆️ --- FIN DE LO AÑADIDO --- ⬆️\n\n\n    // \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d MESSAGE CONVERTER \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n    @Bean\n    public MessageConverter jsonMessageConverter() {\n        Jackson2JsonMessageConverter converter \u003d new Jackson2JsonMessageConverter();\n        DefaultClassMapper classMapper \u003d new DefaultClassMapper();\n        Map\u003cString, Class\u003c?\u003e\u003e idClassMapping \u003d new HashMap\u003c\u003e();\n        \n        idClassMapping.put(\"co.edu.uniquindio.tallerapi2.dto.events.UsuarioCreadoEvent\", UsuarioCreadoEvent.class);\n        idClassMapping.put(\"co.edu.uniquindio.tallerapi2.dto.events.SesionIniciadaEvent\", SesionIniciadaEvent.class);\n        idClassMapping.put(\"co.edu.uniquindio.tallerapi2.dto.events.PasswordResetSolicitadoEvent\", PasswordResetSolicitadoEvent.class);\n        idClassMapping.put(\"co.edu.uniquindio.tallerapi2.dto.events.PasswordActualizadoEvent\", PasswordActualizadoEvent.class);\n        \n        // ⬇️ --- AÑADIR MAPEADO DE CLASE DEL NUEVO EVENTO --- ⬇️\n        idClassMapping.put(\"co.edu.uniquindio.tallerapi2.dto.events.UsuarioEliminadoEvent\", UsuarioEliminadoEvent.class);\n        // ⬆️ --- FIN DE LO AÑADIDO --- ⬆️\n\n        classMapper.setIdClassMapping(idClassMapping);\n        converter.setClassMapper(classMapper);\n\n        return converter;\n    }\n\n    // ... (RabbitTemplate y ListenerFactory sin cambios) ...\n    @Bean\n    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory,\n                                         MessageConverter jsonMessageConverter) {\n        RabbitTemplate template \u003d new RabbitTemplate(connectionFactory);\n        template.setMessageConverter(jsonMessageConverter);\n        return template;\n    }\n\n    @Bean\n    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory,\n                                                                         MessageConverter jsonMessageConverter) {\n        SimpleRabbitListenerContainerFactory factory \u003d new SimpleRabbitListenerContainerFactory();\n        factory.setConnectionFactory(connectionFactory);\n        factory.setMessageConverter(jsonMessageConverter);\n        return factory",
+      "aiProbability": 70,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 116
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763139715668,
+      "startOffset": 177,
+      "endOffset": 237,
+      "codeContent": "import org.springframework.context.annotation.Configuration;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763139730389,
+      "startOffset": 178,
+      "endOffset": 229,
+      "codeContent": "import org.springframework.context.annotation.Bean;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763139751832,
+      "startOffset": 275,
+      "endOffset": 298,
+      "codeContent": "import java.util.Queue;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763139754825,
+      "startOffset": 227,
+      "endOffset": 288,
+      "codeContent": "import org.springframework.context.annotation.Configuration;\n",
+      "aiProbability": 70,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 2
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763139756282,
+      "startOffset": 743,
+      "endOffset": 782,
+      "codeContent": "org.springframework.context.annotation.",
+      "aiProbability": 70,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763139756910,
+      "startOffset": 289,
+      "endOffset": 328,
+      "codeContent": "org.springframework.context.annotation.",
+      "aiProbability": 70,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763139770517,
+      "startOffset": 46,
+      "endOffset": 4482,
+      "codeContent": "// ... (imports) ...\n// ⬇️ Importar el nuevo DTO de evento ⬇️\nimport co.edu.uniquindio.tallerapi2.dto.events.UsuarioEliminadoEvent; \n\nimport java.util.HashMap;\nimport java.util.Map;\n\n@Configuration\npublic class RabbitMQConfig {\n\n    private final AppRabbitMQProperties properties;\n\n    public RabbitMQConfig(AppRabbitMQProperties properties) {\n        this.properties \u003d properties;\n    }\n\n    // \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d EXCHANGE \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n    @Bean\n    public TopicExchange appExchange() {\n        return new TopicExchange(properties.getExchange());\n    }\n\n    // \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d QUEUES \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n    @Bean\n    public Queue usuariosQueue() {\n        return new Queue(properties.getUsuarios().getQueue(), true);\n    }\n\n    @Bean\n    public Queue sesionesQueue() {\n        return new Queue(properties.getSesiones().getQueue(), true);\n    }\n\n    @Bean\n    public Queue passwordQueue() {\n        return new Queue(properties.getPassword().getQueue(), true);\n    }\n\n    // ⬇️ --- AÑADIR NUEVO BEAN DE COLA --- ⬇️\n    @Bean\n    public Queue usuariosEliminadosQueue() {\n        return new Queue(properties.getUsuarios().getEliminados().getQueue(), true);\n    }\n    // ⬆️ --- FIN DE LO AÑADIDO --- ⬆️\n\n\n    // \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d BINDINGS \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n    @Bean\n    public Binding usuariosBinding(Queue usuariosQueue, TopicExchange appExchange) {\n        return BindingBuilder.bind(usuariosQueue)\n                .to(appExchange)\n                .with(properties.getUsuarios().getRoutingKey());\n    }\n\n    @Bean\n    public Binding sesionesBinding(Queue sesionesQueue, TopicExchange appExchange) {\n        return BindingBuilder.bind(sesionesQueue)\n                .to(appExchange)\n                .with(properties.getSesiones().getRoutingKey());\n    }\n\n    @Bean\n    public Binding passwordBinding(Queue passwordQueue, TopicExchange appExchange) {\n        return BindingBuilder.bind(passwordQueue)\n                .to(appExchange)\n                .with(properties.getPassword().getRoutingKey());\n    }\n\n    // ⬇️ --- AÑADIR NUEVO BEAN DE BINDING --- ⬇️\n    @Bean\n    public Binding usuariosEliminadosBinding(Queue usuariosEliminadosQueue, TopicExchange appExchange) {\n        return BindingBuilder.bind(usuariosEliminadosQueue)\n                .to(appExchange)\n                .with(properties.getUsuarios().getEliminados().getRoutingKey());\n    }\n    // ⬆️ --- FIN DE LO AÑADIDO --- ⬆️\n\n\n    // \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d MESSAGE CONVERTER \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n    @Bean\n    public MessageConverter jsonMessageConverter() {\n        Jackson2JsonMessageConverter converter \u003d new Jackson2JsonMessageConverter();\n        DefaultClassMapper classMapper \u003d new DefaultClassMapper();\n        Map\u003cString, Class\u003c?\u003e\u003e idClassMapping \u003d new HashMap\u003c\u003e();\n        \n        idClassMapping.put(\"co.edu.uniquindio.tallerapi2.dto.events.UsuarioCreadoEvent\", UsuarioCreadoEvent.class);\n        idClassMapping.put(\"co.edu.uniquindio.tallerapi2.dto.events.SesionIniciadaEvent\", SesionIniciadaEvent.class);\n        idClassMapping.put(\"co.edu.uniquindio.tallerapi2.dto.events.PasswordResetSolicitadoEvent\", PasswordResetSolicitadoEvent.class);\n        idClassMapping.put(\"co.edu.uniquindio.tallerapi2.dto.events.PasswordActualizadoEvent\", PasswordActualizadoEvent.class);\n        \n        // ⬇️ --- AÑADIR MAPEADO DE CLASE DEL NUEVO EVENTO --- ⬇️\n        idClassMapping.put(\"co.edu.uniquindio.tallerapi2.dto.events.UsuarioEliminadoEvent\", UsuarioEliminadoEvent.class);\n        // ⬆️ --- FIN DE LO AÑADIDO --- ⬆️\n\n        classMapper.setIdClassMapping(idClassMapping);\n        converter.setClassMapper(classMapper);\n\n        return converter;\n    }\n\n    // ... (RabbitTemplate y ListenerFactory sin cambios) ...\n    @Bean\n    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory,\n                                         MessageConverter jsonMessageConverter) {\n        RabbitTemplate template \u003d new RabbitTemplate(connectionFactory);\n        template.setMessageConverter(jsonMessageConverter);\n        return template;\n    }\n\n    @Bean\n    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory,\n                                                                         MessageConverter jsonMessageConverter) {\n        SimpleRabbitListenerContainerFactory factory \u003d new SimpleRabbitListenerContainerFactory();\n        factory.setConnectionFactory(connectionFactory);\n        factory.setMessageConverter(jsonMessageConverter);\n        return factory",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 116
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763139788374,
+      "startOffset": 122,
+      "endOffset": 173,
+      "codeContent": "import org.springframework.context.annotation.Bean;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763139790332,
+      "startOffset": 46,
+      "endOffset": 97,
+      "codeContent": "import org.springframework.amqp.core.TopicExchange;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763139798605,
+      "startOffset": 405,
+      "endOffset": 428,
+      "codeContent": "import java.util.Queue;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763139803735,
+      "startOffset": 671,
+      "endOffset": 701,
+      "codeContent": "org.springframework.amqp.core.",
+      "aiProbability": 70,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763139804256,
+      "startOffset": 603,
+      "endOffset": 642,
+      "codeContent": "org.springframework.context.annotation.",
+      "aiProbability": 70,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/service/EventPublisherService.java",
+      "timestamp": 1763139854680,
+      "startOffset": 803,
+      "endOffset": 872,
+      "codeContent": "import co.edu.uniquindio.tallerapi2.dto.events.UsuarioEliminadoEvent;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/service/EventPublisherService.java",
+      "timestamp": 1763139883534,
+      "startOffset": 1705,
+      "endOffset": 2406,
+      "codeContent": "/**\n     * Publica evento de usuario eliminado\n     */\n    public void publishUsuarioEliminado(UsuarioEliminadoEvent event) {\n        try {\n            log.info(\"Publicando evento de usuario eliminado: {}\", event);\n            rabbitTemplate.convertAndSend(\n                    properties.getExchange(),\n                    properties.getUsuarios().getEliminados().getRoutingKey(), // Usamos el nuevo routing key\n                    event\n            );\n            log.info(\"Evento de eliminación publicado exitosamente para usuario: {}\", event.getEmail());\n        } catch (Exception e) {\n            log.error(\"Error al publicar evento de usuario eliminado: {}\", e.getMessage(), e);\n        }\n    }",
+      "aiProbability": 70,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 16
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/controller/UsuarioController.java",
+      "timestamp": 1763139928337,
+      "startOffset": 1899,
+      "endOffset": 1968,
+      "codeContent": "import co.edu.uniquindio.tallerapi2.dto.events.UsuarioEliminadoEvent;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/RabbitMQConfig.java",
+      "timestamp": 1763140236096,
+      "startOffset": 1070,
+      "endOffset": 1139,
+      "codeContent": "import co.edu.uniquindio.tallerapi2.dto.events.UsuarioEliminadoEvent;",
+      "aiProbability": 90,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 1
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763140493206,
+      "startOffset": 514,
+      "endOffset": 1269,
+      "codeContent": "private Eliminados eliminados \u003d new Eliminados();\n        \n        // 2. Clase interna para la nueva configuración\n        public static class Eliminados {\n            private String queue;\n            private String routingKey;\n\n            public String getQueue() { return queue; }\n            public void setQueue(String queue) { this.queue \u003d queue; }\n            public String getRoutingKey() { return routingKey; }\n            public void setRoutingKey(String routingKey) { this.routingKey \u003d routingKey; }\n        }\n\n        // 3. Getters y Setters para el nuevo campo (¡ESTO ES LO QUE FALTA!)\n        public Eliminados getEliminados() { return eliminados; }\n        public void setEliminados(Eliminados eliminados) { this.eliminados \u003d eliminados; }",
+      "aiProbability": 95,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 16
+    },
+    {
+      "filePath": "C:/Users/holda/OneDrive/Documents/Documentos Universidad/2025-2/Microservicios/proyecto-final/taller-api-2/src/main/java/co/edu/uniquindio/tallerapi2/config/AppRabbitMQProperties.java",
+      "timestamp": 1763140532832,
+      "startOffset": 291,
+      "endOffset": 4087,
+      "codeContent": "private String exchange;\n    [cite_start]private Usuarios usuarios \u003d new Usuarios(); [cite: 563]\n    [cite_start]private Sesiones sesiones \u003d new Sesiones(); [cite: 563]\n    [cite_start]private Password password \u003d new Password(); [cite: 563]\n\n    // ⬇️ ESTA ES LA CLASE MODIFICADA ⬇️\n    public static class Usuarios {\n        [cite_start]private String queue; [cite: 564]\n        [cite_start]private String routingKey; [cite: 564]\n        \n        // --- INICIO DE LA MODIFICACIÓN ---\n        // 1. Campo para la nueva configuración\n        private Eliminados eliminados \u003d new Eliminados();\n        \n        // 2. Clase interna para la nueva configuración\n        public static class Eliminados {\n            private String queue;\n            private String routingKey;\n\n            public String getQueue() { return queue; }\n            public void setQueue(String queue) { this.queue \u003d queue; }\n            public String getRoutingKey() { return routingKey; }\n            public void setRoutingKey(String routingKey) { this.routingKey \u003d routingKey; }\n        }\n\n        // 3. Getters y Setters para el nuevo campo (¡ESTO ES LO QUE FALTA!)\n        public Eliminados getEliminados() { return eliminados; }\n        public void setEliminados(Eliminados eliminados) { this.eliminados \u003d eliminados; }\n        // --- FIN DE LA MODIFICACIÓN ---\n\n        // (Getters y Setters originales de Usuarios)\n        [cite_start]public String getQueue() { [cite: 565]\n            return queue;\n        }\n        [cite_start]public void setQueue(String queue) { [cite: 566]\n            this.queue \u003d queue;\n        }\n        [cite_start]public String getRoutingKey() { [cite: 567]\n            return routingKey;\n        }\n        [cite_start]public void setRoutingKey(String routingKey) { [cite: 568]\n            this.routingKey \u003d routingKey;\n        }\n    }\n    // ⬆️ FIN DE LA CLASE MODIFICADA ⬆️\n\n\n    // (Clases Sesiones y Password sin cambios)\n    public static class Sesiones {\n        [cite_start]private String queue; [cite: 569]\n        [cite_start]private String routingKey; [cite: 570]\n        public String getQueue() { return queue; [cite_start]} [cite: 570-571]\n        public void setQueue(String queue) { this.queue \u003d queue; [cite_start]} [cite: 571-572]\n        public String getRoutingKey() { return routingKey; [cite_start]} [cite: 572-573]\n        public void setRoutingKey(String routingKey) { this.routingKey \u003d routingKey; [cite_start]} [cite: 573-574]\n    }\n\n    public static class Password {\n        [cite_start]private String queue; [cite: 574-575]\n        [cite_start]private String routingKey; [cite: 575]\n        public String getQueue() { return queue; [cite_start]} [cite: 575-576]\n        public void setQueue(String queue) { this.queue \u003d queue; [cite_start]} [cite: 576-577]\n        public String getRoutingKey() { return routingKey; [cite_start]} [cite: 577-578]\n        public void setRoutingKey(String routingKey) { this.routingKey \u003d routingKey; [cite_start]} [cite: 578-579]\n    }\n\n    // (Getters y setters principales sin cambios)\n    public String getExchange() { return exchange; [cite_start]} [cite: 579]\n    public void setExchange(String exchange) { this.exchange \u003d exchange; [cite_start]} [cite: 580-581]\n    public Usuarios getUsuarios() { return usuarios; [cite_start]} [cite: 581-582]\n    public void setUsuarios(Usuarios usuarios) { this.usuarios \u003d usuarios; [cite_start]} [cite: 582-583]\n    public Sesiones getSesiones() { return sesiones; [cite_start]} [cite: 583-584]\n    public void setSesiones(Sesiones sesiones) { this.sesiones \u003d sesiones; [cite_start]} [cite: 584-585]\n    public Password getPassword() { return password; [cite_start]} [cite: 585-586]\n    public void setPassword(Password password) { this.password \u003d password; [cite_start]} [cite: 586-587]",
+      "aiProbability": 70,
+      "aiTool": "GitHub Copilot",
+      "detectionMethod": "REALTIME_SPEED_ANALYSIS",
+      "lineCount": 75
     }
   ],
   "toolStats": {
     "GitHub Copilot": {
-      "usageCount": 34,
-      "totalLines": 778
+      "usageCount": 66,
+      "totalLines": 1378
     }
   }
 }
