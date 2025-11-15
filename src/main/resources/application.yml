@@ -6,47 +6,63 @@ spring:
     name: api-gateway
   webflux:
     cors:
-      allowed-origins: "*" # Cambia esto en producción
+      allowed-origins: "*"
       allowed-methods: "*"
       allowed-headers: "*"
       max-age: 3600
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/taller
+          jwk-set-uri: http://keycloak:8080/realms/taller/protocol/openid-connect/certs
+
+  management:
+    # ... (tu configuración de management) ...
+    endpoints:
+      web:
+        exposure:
+          include: health,info,metrics,gateway,prometheus
+    endpoint:
+      health:
+        probes:
+          enabled: true
+      prometheus:
+        enabled: true
+    security:
+      enabled: false
+
   cloud:
     gateway:
       routes:
-        # =================================================================
-        # 1. Ruta para Actuator (Prometheus, Health)
-        # =================================================================
         - id: taller-api-2-actuator-route
           uri: http://taller-api-2:8080
           predicates:
             - Path=/actuator/**
-          order: 0 # Prioridad más alta
+          order: 0
+        - id: profile-service-route
+          uri: http://profile-service-go:8081
+          order: 5
+          predicates:
+            - Path=/api/perfiles/**
+          filters:
+            # ⬇️ --- CORRECCIÓN --- ⬇️
+            # 1. Eliminamos el filtro 'AddRequestHeader' que estaba fallando.
+            # 2. Dejamos solo el 'RemoveRequestHeader'.
+            # La lógica de añadir 'X-User-ID' la haremos en SecurityConfig.java
+            - name: RemoveRequestHeader
+              args:
+                name: Authorization
+            # ⬆️ --- FIN DE LA CORRECCIÓN --- ⬆️
 
-        # =================================================================
-        # 2. Ruta principal de la API (CON LA SINTAXIS SIMPLIFICADA)
-        # =================================================================
-        # Esta ruta SÍ debe tener menor prioridad (un número más alto)
-        # que la ruta de agregación que está en el controlador.
         - id: taller-api-2-proxy-route
           uri: http://taller-api-2:8080
-          order: 10 # Prioridad baja
+          order: 10
           predicates:
             - Path=/api/**
-
-        # =================================================================
-        # 3. Ruta a Keycloak
-        # =================================================================
         - id: keycloak-route
           uri: http://keycloak:8080
           order: 1
           predicates:
-            # Redirige todas las peticiones necesarias para el login y la admin console
             - Path=/realms/**, /admin/**, /resources/**, /js/**
-
-management:
-  endpoints:
-    web:
-      exposure:
-        # Exponemos los endpoints del PROPIO Gateway
-        include: health,info,metrics,gateway

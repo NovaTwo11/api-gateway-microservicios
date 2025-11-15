@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.UUID;
 
@@ -18,13 +19,14 @@ import java.util.UUID;
 public class UsuarioAgregadoController {
 
     private final WebClient webClientTallerApi;
+    private final WebClient webClientProfileService;
 
-    public UsuarioAgregadoController(WebClient.Builder webClientBuilder) {
-        // Creamos un WebClient que apunta al servicio 'taller-api-2'
-        // 'taller-api-2' es el nombre del servicio en docker-compose.yml
-        this.webClientTallerApi = webClientBuilder
-                .baseUrl("http://taller-api-2:8080")
-                .build();
+    public UsuarioAgregadoController(
+            @Qualifier("tallerApiWebClientBuilder") WebClient.Builder tallerApiBuilder,
+            @Qualifier("profileServiceWebClientBuilder") WebClient.Builder profileBuilder) {
+
+        this.webClientTallerApi = tallerApiBuilder.build();
+        this.webClientProfileService = profileBuilder.build();
     }
 
     /**
@@ -52,7 +54,7 @@ public class UsuarioAgregadoController {
                 .bodyToMono(UsuarioResponse.class);
 
         // 2. (Fan-out) Preparamos la llamada al endpoint de Perfiles
-        Mono<PerfilResponse> perfilMono = webClientTallerApi.get()
+        Mono<PerfilResponse> perfilMono = webClientProfileService.get()
                 .uri("/api/perfiles/por-usuario/" + id)
                 .header(HttpHeaders.AUTHORIZATION, authorizationHeader) // Pasar el token
                 .retrieve()

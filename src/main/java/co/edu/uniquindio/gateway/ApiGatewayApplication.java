@@ -22,4 +22,18 @@ public class ApiGatewayApplication {
     public WebClient.Builder webClientBuilder() {
         return WebClient.builder();
     }
+
+    // Builder para el NUEVO servicio de Perfiles (Go)
+    @Bean
+    public WebClient.Builder profileServiceWebClientBuilder() {
+        return WebClient.builder()
+                .baseUrl("http://profile-service-go:8081");
+    }
+
+    // Builder para el servicio de Usuarios (Java)
+    @Bean
+    public WebClient.Builder tallerApiWebClientBuilder() {
+        return WebClient.builder()
+                .baseUrl("http://taller-api-2:8080");
+    }
 }
